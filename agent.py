@@ -5,16 +5,19 @@ class Agent:
 
     def __init__(self): 
         """
-        Create an instance of 
+        Create an instance of the class
         """
         pass
 
     def run(self): 
         """
         Run the agent 
-        """ 
-        return True 
 
+        Returns: 
+        Bool: Whether or not the agent terminated unexpectedly. 
+        """ 
+        print("Agent started!")
+        return True 
 
 class Gardener(Agent): 
     """ 
@@ -24,7 +27,7 @@ class Gardener(Agent):
     def __init__(self): 
         pass
 
-def main(): 
-    pass
-
-main() if (__name__ == "__main__") else print("Import not currently supported!")
+    def run(self):         
+        print("Gardener started!")
+        return super().run()
+        
