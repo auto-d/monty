@@ -11,6 +11,9 @@ def main(args):
     monty.run()
 
 def validate_args(args): 
+    """
+    Validate the arguments 
+    """
     valid = False
     error_prefix = "error: "
     match args.backend: 

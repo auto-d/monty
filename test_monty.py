@@ -1,13 +1,15 @@
 import os 
 
 def test_monty(): 
-    success = True
-    
+
     try: 
-        if (0 != os.system("python3 monty.py --help")): 
-            success = False
+        # Good usage... 
+        assert(0 == os.system("python3 monty.py --help"))
+        
+        # Bad usage, should bail
+        assert(0 != os.system("python3 monty.py --internal --key='asdkjf;aads'"))
+        assert(0 != os.system("python3 monty.py --openai"))
+        assert(0 != os.system("python3 monty.py --ollama"))
 
     except: 
-        success = False
-
-    assert(success == True)
+        assert(False)
