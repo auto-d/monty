@@ -4,36 +4,19 @@ import agent
 
 def main(args): 
     """
-    Gardener agent entry point 
+    Application entry point 
     """
+    try: 
+        monty = agent.Gardener()
 
-    monty = agent.Gardener()
-    monty.run()
+        monty.backened = args.backend
+        monty.key = args.key
+        monty.uri = args.uri
 
-def validate_args(args): 
-    """
-    Validate the arguments 
-    """
-    valid = False
-    error_prefix = "error: "
-    match args.backend: 
-        case "open-ai": 
-            if args.key and args.uri: 
-                valid = True 
-            else: 
-                print(error_prefix, "OpenAI backend requires a URI and key.")
-        case "ollama": 
-            if args.key and args.uri: 
-                valid = True 
-            else: 
-                print(error_prefix, "Ollama backend requires a URI and key.")
-        case "internal": 
-            if not args.key and not args.uri: 
-                valid = True
-            else: 
-                print(error_prefix, "URI or key provided but an internal model was requested!")
-
-    return valid
+        monty.run()
+    
+    except Exception as e: 
+        print(e)
 
 if __name__ == '__main__': 
     parser = argparse.ArgumentParser(
@@ -50,5 +33,4 @@ if __name__ == '__main__':
     
     args = parser.parse_args() 
 
-    if validate_args(args):
-        main(args) 
+    main(args) 
