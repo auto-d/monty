@@ -50,22 +50,22 @@ class Agent:
         }
 
         print(llm_config)
-        assistant = AssistantAgent("assistant", llm_config=llm_config)
+        assistant = AssistantAgent("monty", llm_config=llm_config)
         assistant.update_system_message(self.system)
 
-        user_proxy = UserProxyAgent("user_proxy", code_execution_config=False)
+        user_proxy = UserProxyAgent("weather-bot", code_execution_config=False)
 
         # Start the chat
         user_proxy.initiate_chat(
             assistant,
             max_turns=1, 
-            message="Today is Sunday, August 25th, 2024. It rained all last week and it's going to rain next week as well. I live in North Carolina.",
+            message="Today is Sunday, August 25th, 2024. It rained all last week and it's going to rain next week as well. The client lives in North Carolina.",
         )
 
         return True 
 
 class Gardener(Agent): 
-    """ 
+    """
     Encapsulates the state and behavior of an LLM-powered gardening assistant
     """
     system_prompt="""
