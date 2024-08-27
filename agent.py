@@ -9,7 +9,7 @@ class Agent:
     key = None    
     uri = None
 
-    def __init__(self, system_prompt): 
+    def __init__(self, system_prompt="You are a helpful assistant."): 
         """
         Create an instance of the class
         """
