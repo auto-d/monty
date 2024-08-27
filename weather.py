@@ -1,11 +1,16 @@
 import requests
 
 class IPGeo: 
+    """
+    Wrapper for a free IP geo API. Assumed to be called from within the US only. 
+    """
 
     data = None
     lat = None
     lon = None
     zip = None
+    city = None
+    state = None
 
     def __init__(self): 
         self.geo()
@@ -19,6 +24,7 @@ class IPGeo:
         # lat/long of its owner
         ip_geo_url='https://api.techniknews.net/ipgeo'
 
+        print('Looking up location by IP...')
         response = requests.get(ip_geo_url)
         if response.ok: 
             try: 
@@ -26,11 +32,16 @@ class IPGeo:
                 self.lat = self.data['lat']
                 self.lon = self.data['lon']
                 self.zip = self.data['zip']
+                self.city = self.data['city']
+                self.state = self.data['regionName']
             except KeyError as k:
                 print('Failed to unpack IP geolocation response')
 
 class Forecast: 
-    
+    """
+    Wrapper for a US National Weather Service forecast API
+    """
+
     data = None    
     forecast_url = None
     station = None
@@ -49,6 +60,7 @@ class Forecast:
         points_base_url = "https://api.weather.gov/points/"
         points_url = points_base_url + str(lat) + ',' + str(lon)
 
+        print("Resolving weather prediction site...")
         response = requests.get(points_url)
         if response.status_code == 200: 
             self.data = response.json()['properties']
@@ -65,6 +77,7 @@ class Forecast:
         """
         if self.forecast_url: 
             
+            print("Retrieving forecast...")
             response = requests.get(self.forecast_url) 
             if response.status_code == 200: 
                 
@@ -87,6 +100,9 @@ class Forecast:
 import datetime
 
 class Precipitation: 
+    """
+    Wrapper for a very annoying NOAA API to obtain historical precipitation info.
+    """
 
     noaa_token='HGSaAdFuTwXNcAgyrbysQlUXxBTTxsjY' #10 requests/sec, 10000 requests/day
     noaa_url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data'
@@ -118,10 +134,9 @@ class Precipitation:
             + f'&locationid=ZIP:{zip_code}' \
             + f'&startdate={start}' \
             + f'&enddate={end}'
-            
-        print(self.noaa_url + params)
 
-        print('Querying painfully slow NOAA precipitation API, please be patient...')
+        print('Querying for historical precipitation, this might take a bit...')
+
         response = requests.get(self.noaa_url + params, headers=self.headers)
         if response.status_code == 200: 
             self.precip = [] 
@@ -133,4 +148,4 @@ class Precipitation:
                         date = result['date'].split('T')[0]
                         self.precip.append({ 'date': date, 'precip_inches': str(result['value'])})
             except KeyError as k: 
-                print("Failed to parse precipitation data response from NOAA API, bailing!") 
+                print(f"Failed to parse precipitation data response from NOAA API, bailing! \n This may happen if there are no historicals available for the identified zip code ({zip_code})") 

@@ -13,7 +13,7 @@ def main(args):
         monty.key = args.key
         monty.uri = args.uri
 
-        monty.run()
+        monty.run('Could use some recommendations on garden chores today!', args.max_turns)
     
     except Exception as e: 
         print(e)
@@ -30,6 +30,7 @@ if __name__ == '__main__':
         ]) 
     parser.add_argument("--key", help="API key to use for LLM backend")
     parser.add_argument("--uri", help="URI (ip:port/path) of LLM API")
+    parser.add_argument("--max-turns", help="Maximum number of turns to interact with monty")
     
     args = parser.parse_args() 
 
