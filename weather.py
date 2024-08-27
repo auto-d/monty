@@ -5,6 +5,7 @@ class IPGeo:
     data = None
     lat = None
     lon = None
+    zip = None
 
     def __init__(self): 
         self.geo()
@@ -24,6 +25,7 @@ class IPGeo:
                 self.data = response.json()
                 self.lat = self.data['lat']
                 self.lon = self.data['lon']
+                self.zip = self.data['zip']
             except KeyError as k:
                 print('Failed to unpack IP geolocation response')
 
@@ -82,27 +84,53 @@ class Forecast:
         else: 
             raise Exception("No forecast URL found!")
 
-class Precipitation(): 
+import datetime
+
+class Precipitation: 
+
+    noaa_token='HGSaAdFuTwXNcAgyrbysQlUXxBTTxsjY' #10 requests/sec, 10000 requests/day
+    noaa_url = 'http://www.ncdc.noaa.gov/cdo-web/api/v2/data'
+
+    headers = { 'token' : noaa_token }
+    precip = None
 
     def __init__(self): 
         pass
 
-    def get_precipitation(self): 
+    def update_precipitation(self, zip_code, days_prior=7): 
+        """
+        Retrieve historical precipitation data from a NOAA API for a US zip code
+        """
+        
+        # Relative times computed with help from datetime API docs (https://docs.python.org/3/library/datetime.html#examples-of-usage-timedelta)
+        end_date = datetime.date.today() 
+        start_date = end_date - datetime.timedelta(days=days_prior)
+        end = end_date.strftime("%Y-%m-%d")
+        start = start_date.strftime("%Y-%m-%d")
+         
+        # The NOAA APIs seem notorious for their inscrutability, used this API guide: 
+        # https://github.com/partytax/ncei-api-guide/blob/master/README.md
 
-        noaa_token='HGSaAdFuTwXNcAgyrbysQlUXxBTTxsjY'
-        noaa_url='https://www.ncei.noaa.gov/cdo-web/api/v2/datasets/PRECIP_HLY'
+        # API expects YYYY-MM-DD for date range
+        params = '?' \
+            + 'datasetid=GHCND' \
+            + '&units=standard' \
+            + f'&locationid=ZIP:{zip_code}' \
+            + f'&startdate={start}' \
+            + f'&enddate={end}'
+            
+        print(self.noaa_url + params)
 
-        # Datasets are at, https://www.ncei.noaa.gov/cdo-web/api/v2/datasets/  A query to this endpoint
-        # returns the full list, we care bsaout the hourly precip data: 
-        #   {'uid': 'gov.noaa.ncdc:C00313',
-        #    'mindate': '1900-01-01',
-        #    'maxdate': '2014-01-01',
-        #    'name': 'Precipitation Hourly',
-        #    'datacoverage': 1,
-        #    'id': 'PRECIP_HLY'}]}
-        headers = { 'token' : noaa_token }
+        print('Querying painfully slow NOAA precipitation API, please be patient...')
+        response = requests.get(self.noaa_url + params, headers=self.headers)
+        if response.status_code == 200: 
+            self.precip = [] 
 
-        response = requests.get(noaa_url, headers=headers)
-
-        print(response.json())
-
+            try: 
+                results = response.json()['results']
+                for result in results: 
+                    if result['datatype'] == 'PRCP':
+                        date = result['date'].split('T')[0]
+                        self.precip.append({ 'date': date, 'precip_inches': str(result['value'])})
+            except KeyError as k: 
+                print("Failed to parse precipitation data response from NOAA API, bailing!") 
