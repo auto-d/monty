@@ -49,12 +49,13 @@ class Agent:
             ]
         }
 
+        # Agent name needs to be refactored into the Gardener class
         assistant = AssistantAgent("monty", llm_config=llm_config)
         assistant.update_system_message(self.system)
 
+        # Agent name needs to be refactored into the Gardener class
         user_proxy = UserProxyAgent("weather-bot", code_execution_config=False)
 
-        # Start the chat
         user_proxy.initiate_chat(
             assistant,
             max_turns=max_turns, 
@@ -68,7 +69,7 @@ import datetime
 
 class Gardener(Agent): 
     """
-    Encapsulates the state and behavior of a toy LLM-powered gardener and a 
+    Encapsulates the state and behavior of a toy LLM-powered gardener and his proxy, weather-bot
     """
     
     system_prompt=\
