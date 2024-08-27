@@ -16,8 +16,7 @@ def test_get_forecast():
     assert(type(forecast.forecast) is list)
 
 def test_get_precipitation(): 
-    geo = weather.IPGeo()
     p = weather.Precipitation()
-    p.update_precipitation(geo.zip, 2)
+    p.update_precipitation('27603', 2)
 
     assert(type(p.precip) is list)
