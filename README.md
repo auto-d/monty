@@ -4,14 +4,14 @@
 
 ## Setup
 
-The application requires Python 3 and has been tested on MacOS 13.5.2. No filesystem dependencies exist and cross-platform deployment should work (my story). Dependencies are included in the repo and should be installed prior to running the tool. 
+The application requires Python 3 (developed w/ 3.12) and has been tested on MacOS 13.5. No filesystem dependencies exist and cross-platform deployment should work (my story). Dependencies are included in the repo and should be installed prior to running the tool. 
 
 1. Set up a virtual environment to contain dependencies: `python -m venv .venv`
 2. Activate your virtual environment: `source .venv/bin/activate`
 2. Install dependencies: `pip install -r requirements.txt`
 3. Check usage: `python monty.py --help`
 
-ℹ️ To validate this CLI tool, an openAI API key is currently required. Acknowledging that's not ideal, here's a functioning key that can be used for testing and validation: 
+ℹ️ To validate this CLI tool, an openAI API key is currently required. Here's a functioning key that can be used for testing and validation: 
 
 >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
 
@@ -37,10 +37,11 @@ options:
 
 ⛔️ The internal and Ollama-based backends have been removed due to performance issues on desktop hardware. 
 
-### Examples
+### Example
 
-1. Start a chat session of no more than 3 turns with an OpenAI-driven Monty: `python monty.py --max-turns=3 --backend=open-ai --key=<openAI API key>`
-2. Start a chat session with a locally hosted phi3 model: `python monty.py --backend=internal`
+Start a chat session of no more than 3 turns with an OpenAI-driven Monty: : `python monty.py --max-turns=3 --backend=open-ai --key='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'`
+
+❗️ This example uses the openAI key provided above and should be used to validate the behavior of the tool. :)
 
 ## Testing
 
